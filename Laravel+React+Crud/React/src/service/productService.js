@@ -1,15 +1,33 @@
 import api from "./api";
-export const getProducts = async () => {
-    try {
-        const response = await api.get("/product");
-        let products = await response.data.products;
-        console.log(products)
-        return products;
-
-    } catch (error) {
-        console.error("Error fetching products:", error);
-        throw error;
-    }
+export const getProducts = async (query = '') => {
+  try {
+      // Create the URL based on whether we have a search term or not
+      let url;
+      if (query) {
+          // If we have a search query, add it to the URL as a parameter
+          url = `/product?query=${encodeURIComponent(query)}`;
+      } else {
+          // If no search query, just use the basic URL
+          url = "/product";
+      }
+      
+      // Make the API request to the backend
+      const response = await api.get(url);
+      
+      // Get the products from the response data
+      let products = response.data.products;
+      
+      // Log the products to the console (for debugging)
+      console.log(products);
+      
+      // Return the products to whoever called this function
+      return products;
+      
+  } catch (error) {
+      // If anything goes wrong, log the error and throw it
+      console.error("Error fetching products:", error);
+      throw error;
+  }
 };
 export const createProduct = async (data) => {
     try {

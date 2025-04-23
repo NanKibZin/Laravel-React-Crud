@@ -34,14 +34,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Product routes (protected)
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('product', [ProductController::class, 'list']);
     Route::post('product', [ProductController::class, 'store']);
     Route::get('product/{id}', [ProductController::class, 'getProductById']);
     Route::post('product/{id}', [ProductController::class, 'update']);
     Route::delete('product/{id}', [ProductController::class, 'delete']);
     Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
-// });
+});
 
 
 

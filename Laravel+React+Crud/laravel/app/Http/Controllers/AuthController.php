@@ -25,8 +25,10 @@ class AuthController extends Controller
         $credentials=$request->only('email','password');
         if(Auth::attempt($credentials)){
             $token=Auth::user()->createToken('API Token')->plainTextToken;
+            $user=Auth::user();
             return response([
                 'status'=>true,
+                'user'=>$user,
                 'token'=>$token,
                 'message'=>'login successfully'
             ],200);
@@ -58,7 +60,8 @@ class AuthController extends Controller
         return response([
             'status'=>true,
             'message'=>'Registration successfully created',
-            'token'=>$token
+            'token'=>$token,
+            'user'=>$user
             
         ],201);
     }

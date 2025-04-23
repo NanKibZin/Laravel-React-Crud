@@ -8,13 +8,20 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function list(){
-
-        $products = Product::all();
-
+    public function list(Request $request)
+    {
+        $query = $request->input('query');
+        
+        if ($query && !empty($query)) {
+            // Search by name only
+            $products = Product::where('name', 'like', "%{$query}%")->get();
+        } else {
+            $products = Product::all();
+        }
+    
         return response([
-            'products'  => $products
-        ],200);
+            'products' => $products
+        ], 200);
     }
 
     public function store(Request $request){

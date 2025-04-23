@@ -1,100 +1,83 @@
-import React, { useState } from 'react';
-import { registerUser, setupAuthHeader } from '../service/authService';
-import { useNavigate } from 'react-router-dom';
+import React, { useState,useEffect } from 'react'
+import { Button } from 'react-bootstrap'
+// import {useHistory} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
-const Register = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  
+
+function Register() {
+  useEffect(()=>{
+    if(localStorage.getItem('user-info')){
+      navigate('/');
+    }
+  })
   const navigate = useNavigate();
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    
-    // Simple validation
-    if (!name || !email || !password) {
-      setError('Please fill in all fields');
-      return;
-    }
-
-    try {
-      const success = await registerUser(name, email, password);
-      
-      if (success) {
-        // Setup authorization header with token
-        setupAuthHeader();
-        // Redirect to home page
-        navigate('/');
-      } else {
-        setError('Registration failed. Please try again.');
+  const [name,setName]=useState("")
+  const [password,setPassword]=useState("")
+  const [email,setEmail]=useState("")
+  const signUp= async ()=>{
+    let item={name,password,email}
+    console.warn(item)
+    let result= await fetch("http://127.0.0.1:8000/api/register",{
+      method:"POST",
+      body:JSON.stringify(item),
+      headers:{
+        "Content-Type":"application/json",
+        "Accept":'application/json'
       }
-    } catch (error) {
-      setError('Something went wrong. Please try again.');
+    })
+    result= await result.json()
+    console.warn("result=",result)
+    if(result.status==true){
+      localStorage.setItem("user-info",JSON.stringify(result))
+      navigate("/");
     }
-  };
-
+  }
   return (
-    <div className="container mt-5">
-      <div className="row">
-        <div className="col-md-6 offset-md-3">
-          <div className="card">
-            <div className="card-header">
-              <h3>Register</h3>
-            </div>
-            <div className="card-body">
-              {error && <div className="alert alert-danger">{error}</div>}
-              
-              <form onSubmit={handleRegister}>
-                <div className="mb-3">
-                  <label htmlFor="name" className="form-label">Name:</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Email:</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Password:</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <button type="submit" className="btn btn-primary">Register</button>
-              </form>
-              
-              <div className="mt-3">
-                <p>Already have an account? <a href="/login">Login</a></p>
-              </div>
-            </div>
-          </div>
+    <div className='mt-5 container '>
+      <h1>Register Page</h1>
+      <form className="mt-5 container">
+        <div className="mb-3">
+          <input
+            type="text"
+            name="name"
+           value={name}
+           onChange={(e)=>setName(e.target.value)}
+            placeholder="name"
+            className="form-control"
+            required
+          />
         </div>
-      </div>
+        
+        <div className="mb-3">
+          <input
+            type="text"
+            name="password"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
+            placeholder="password"
+            className="form-control"
+  
+          />
+        </div>
+        
+        <div className="mb-3">
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+            placeholder="email"
+            className="form-control"
+            required
+          />
+        </div>
+        
+        <Button onClick={signUp} variant="primary" type="button" className="px-4">
+          Sign Up
+        </Button>
+      </form>
     </div>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register

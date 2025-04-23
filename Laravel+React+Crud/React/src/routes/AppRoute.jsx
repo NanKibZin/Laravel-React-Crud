@@ -1,16 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Master from '../layout/master'
 import ProductList from '../pages/ProductList'
 import AddProduct from '../pages/AddProduct'
 import EditProduct from '../pages/EditProduct'
+import NavBar from '../pages/NavBar'
+import Login from '../pages/Login'
+import Register from '../pages/Register'
 
 const AppRoute = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
   return (
     <div>
+      <NavBar onSearch={handleSearch} />
      <Routes>
         <Route path='/' element={<Master/>}>
-           <Route index element={<ProductList/>}/>
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register />} />
+           <Route index element={<ProductList  searchQuery={searchQuery}/>}/>
            <Route path='create' element={<AddProduct/>}/>
            <Route path='edit/:id' element={<EditProduct/>}/>
         </Route>
